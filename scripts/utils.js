@@ -31,6 +31,7 @@ const MILO_TEMPLATES = [
     'featured-article',
     'figure',
     'form',
+    'formen',
     'fragment',
     'featured-article',
     'global-footer',
