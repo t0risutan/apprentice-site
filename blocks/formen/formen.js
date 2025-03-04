@@ -4,6 +4,43 @@ export default function init(el) {
   console.log(el);
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("custom-form");
+
+  form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+      
+      const payload = constructPayload(form);
+      payload.timestamp = new Date().toISOString();
+
+      try {
+          const response = await fetch("https://submission-worker.main--lehre-site--berufsbildung-basel.workers.dev", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+              throw new Error(`Error: ${response.statusText}`);
+          }
+
+          console.log("Form submitted successfully", await response.json());
+          form.reset();
+      } catch (error) {
+          console.error("Form submission failed:", error);
+      }
+  });
+
+  function constructPayload(form) {
+      const payload = {};
+      new FormData(form).forEach((value, key) => {
+          payload[key] = value;
+      });
+      return payload;
+  }
+});
 
 // const RULE_OPERATORS = {
 //   equal: '=',
