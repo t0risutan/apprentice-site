@@ -6,10 +6,24 @@ export default function init(el) {
 
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("custom-form");
+  const submitButton = document.getElementById("submit-button");
+  const statusMessage = document.createElement("p");
+  statusMessage.id = "status-message";
+  form.appendChild(statusMessage);
 
   form.addEventListener("submit", async function (event) {
       event.preventDefault();
+      submitButton.disabled = true;
+      statusMessage.textContent = "Submitting...";
+      statusMessage.style.color = "blue";
       
+      if (!form.checkValidity()) {
+          statusMessage.textContent = "Please fill in all required fields correctly.";
+          statusMessage.style.color = "red";
+          submitButton.disabled = false;
+          return;
+      }
+
       const payload = constructPayload(form);
       payload.timestamp = new Date().toISOString();
 
@@ -27,10 +41,15 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           console.log("Form submitted successfully", await response.json());
+          statusMessage.textContent = "Form submitted successfully!";
+          statusMessage.style.color = "green";
           form.reset();
       } catch (error) {
           console.error("Form submission failed:", error);
+          statusMessage.textContent = "Submission failed. Please try again.";
+          statusMessage.style.color = "red";
       }
+      submitButton.disabled = false;
   });
 
   function constructPayload(form) {
@@ -41,6 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
       return payload;
   }
 });
+
 
 // const RULE_OPERATORS = {
 //   equal: '=',
